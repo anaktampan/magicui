@@ -1,64 +1,59 @@
-import { DocsCopyPage } from "@/components/docs-copy-page";
-import { Badge } from "@/components/ui/badge";
-import { absoluteUrl } from "@/lib/utils";
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { mdxComponents } from "@/mdx-components"
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
+import { findNeighbour } from "fumadocs-core/server"
 
-import { Contribute } from "@/components/contribute";
-import { DocsTableOfContents } from "@/components/docs-toc";
-import { SidebarCTA } from "@/components/sidebar-cta";
-import { Button } from "@/components/ui/button";
-import { replaceComponentSource } from "@/lib/docs";
-import { source } from "@/lib/source";
-import { mdxComponents } from "@/mdx-components";
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconArrowUpRight,
-} from "@tabler/icons-react";
-import { findNeighbour } from "fumadocs-core/server";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { replaceComponentSource } from "@/lib/docs"
+import { source } from "@/lib/source"
+import { absoluteUrl } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Contribute } from "@/components/contribute"
+import { DocsCopyPage } from "@/components/docs-copy-page"
+import { DocsTableOfContents } from "@/components/docs-toc"
+import { SidebarCTA } from "@/components/sidebar-cta"
 
-export const revalidate = false;
-export const dynamic = "force-static";
-export const dynamicParams = false;
+export const revalidate = false
+export const dynamic = "force-static"
+export const dynamicParams = false
 
 export function generateStaticParams() {
-  return source.generateParams();
+  return source.generateParams()
 }
 
 interface DocPageProps {
   params: Promise<{
-    slug: string[];
-  }>;
+    slug: string[]
+  }>
 }
 
 async function getDocFromParams({ params }: DocPageProps) {
-  const { slug } = await params;
-  const page = source.getPage(slug);
-  if (!page) notFound();
-  const doc = page.data;
+  const { slug } = await params
+  const page = source.getPage(slug)
+  if (!page) notFound()
+  const doc = page.data
   if (!doc.title || !doc.description) {
-    notFound();
+    notFound()
   }
 
-  return { doc, page };
+  return { doc, page }
 }
 
 export async function generateMetadata({
   params,
 }: DocPageProps): Promise<Metadata> {
-  const { doc, page } = await getDocFromParams({ params });
+  const { doc, page } = await getDocFromParams({ params })
 
   if (!doc) {
-    return {};
+    return {}
   }
 
-  const url = process.env.NEXT_PUBLIC_APP_URL;
+  const url = process.env.NEXT_PUBLIC_APP_URL
 
-  const ogUrl = new URL(`${url}/og`);
-  ogUrl.searchParams.set("title", doc.title ?? "");
-  ogUrl.searchParams.set("description", doc.description ?? "");
+  const ogUrl = new URL(`${url}/og`)
+  ogUrl.searchParams.set("title", doc.title ?? "")
+  ogUrl.searchParams.set("description", doc.description ?? "")
 
   return {
     title: `${doc.title} | Magic UI`,
@@ -83,14 +78,14 @@ export async function generateMetadata({
       images: [ogUrl.toString()],
       creator: "@dillionverma",
     },
-  };
+  }
 }
 
 export default async function DocPage({ params }: DocPageProps) {
-  const { doc, page } = await getDocFromParams({ params });
-  const MDX = doc.body;
-  const neighbours = findNeighbour(source.pageTree, page.url);
-  const links = doc.links;
+  const { doc, page } = await getDocFromParams({ params })
+  const MDX = doc.body
+  const neighbours = findNeighbour(source.pageTree, page.url)
+  const links = doc.links
 
   return (
     <div
@@ -145,24 +140,6 @@ export default async function DocPage({ params }: DocPageProps) {
                 </p>
               )}
             </div>
-            {links ? (
-              <div className="flex items-center space-x-2 pt-4">
-                {links?.doc && (
-                  <Badge asChild variant="secondary">
-                    <Link href={links.doc} target="_blank" rel="noreferrer">
-                      Docs <IconArrowUpRight />
-                    </Link>
-                  </Badge>
-                )}
-                {links?.api && (
-                  <Badge asChild variant="secondary">
-                    <Link href={links.api} target="_blank" rel="noreferrer">
-                      API Reference <IconArrowUpRight />
-                    </Link>
-                  </Badge>
-                )}
-              </div>
-            ) : null}
           </div>
           <div className="w-full flex-1 *:data-[slot=alert]:first:mt-0">
             <MDX components={mdxComponents} />
@@ -207,5 +184,5 @@ export default async function DocPage({ params }: DocPageProps) {
         ) : null}
       </div>
     </div>
-  );
+  )
 }
