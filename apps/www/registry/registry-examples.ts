@@ -2245,4 +2245,34 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "floating-3d-particles-demo",
+    type: "registry:example",
+    title: "Floating 3D Particles Demo",
+    description:
+      "Example showing a floating 3D particle field behind hero content.",
+    registryDependencies: ["@magicui/floating-3d-particles"],
+    dependencies: ["lucide-react", "next-themes"],
+    files: [
+      {
+        path: "example/floating-3d-particles-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "floating-3d-particles-demo-2",
+    type: "registry:example",
+    title: "Floating 3D Particles Demo 2",
+    description:
+      "Example showing the particle field as a standalone background.",
+    registryDependencies: ["@magicui/floating-3d-particles"],
+    dependencies: ["next-themes"],
+    files: [
+      {
+        path: "example/floating-3d-particles-demo-2.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]
